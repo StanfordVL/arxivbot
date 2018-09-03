@@ -123,6 +123,7 @@ def handle_command(command, channel):
     # Sends the response back to the channel
     slack_client.api_call(
         "chat.postMessage",
+        link_names=1,
         channel=channel,
         text=response
     )
