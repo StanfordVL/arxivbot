@@ -23,7 +23,7 @@ starterbot_id = None
 RTM_READ_DELAY = 1 # 1 second delay between reading from RTM
 EXAMPLE_COMMAND = "do"
 MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
-ARXIV_REGEX = r'(https?://[^\s]+)'
+ARXIV_REGEX = r'(https?://[^\s]+[0-9]+)'
 
 # for sumy
 lang = 'english'
@@ -48,10 +48,11 @@ def parse_arxiv(command):
     """
     Hacky way to parse out an an arxiv ID from a sentence
     """
-    command = command.strip('>')
     links = re.findall(ARXIV_REGEX, command)
     arxiv_ids = []
+    print(command)
     for link in links:
+        print(link)
         if 'arxiv' not in link:
             continue
         arxiv_id = link.split('/')[-1]
@@ -107,17 +108,17 @@ def handle_command(command, channel):
         Executes bot command if the command is known
     """
     # This is where you start to implement more commands!
-    articles = parse_arxiv(command)
-    if len(articles) > 0:
-        response = 'Here is what I found on arXiv: '
-        try:
+    try:
+        articles = parse_arxiv(command)
+        if len(articles) > 0:
+            response = 'Here is what I found on arXiv: '
             for article in parse_arxiv(command):
                 response += '\n\n'
                 response += format_arxiv(article)
-        except:
-            response = 'Some exception caught. Go debug!'
-    else:
-        response = "Don't seem to find an arXiv link..."
+        else:
+            response = "Don't seem to find an arXiv link..."
+    except:
+        response = 'Some exception caught. @danfei go debug!'
 
     # Sends the response back to the channel
     slack_client.api_call(
