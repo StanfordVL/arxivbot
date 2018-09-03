@@ -49,7 +49,6 @@ def parse_arxiv(command):
         arxiv_id = arxiv_id.split('.pdf')[0]
         arxiv_ids.append(arxiv_id)
     articles = []
-    print(arxiv_ids)
     if len(arxiv_ids) > 0:
         articles = arxiv.query(id_list=arxiv_ids)
     return articles
@@ -59,7 +58,7 @@ def format_arxiv(article, do_summarize=True):
     msg = 'Title: %s\n' % article['title']
     msg += 'Authors: %s\n' % ', '.join(article['authors'])
     abstract = ' '.join(article['summary'].split('\n'))
-    msg += '\nAbstract (summarized): ' + summarize(abstract) + '\n\n'
+    msg += '\nAbstract (auto-summarized): ' + summarize(abstract) + '\n\n'
     msg += 'PDF: %s' % article['pdf_url']
     return msg
 
@@ -77,6 +76,7 @@ def parse_bot_commands(slack_events):
                 return message, event["channel"]
     return None, None
 
+
 def parse_direct_mention(message_text):
     """
         Finds a direct mention (a mention that is at the beginning) in message text
@@ -86,6 +86,7 @@ def parse_direct_mention(message_text):
     # the first group contains the username, the second group contains the remaining message
     return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
 
+
 def handle_command(command, channel):
     """
         Executes bot command if the command is known
@@ -94,9 +95,12 @@ def handle_command(command, channel):
     articles = parse_arxiv(command)
     if len(articles) > 0:
         response = 'Here is what I found on arXiv: '
-        for article in parse_arxiv(command):
-            response += '\n\n'
-            response += format_arxiv(article)
+        try:
+            for article in parse_arxiv(command):
+                response += '\n\n'
+                response += format_arxiv(article)
+        except:
+            response = 'Some exception caught. Go debug!'
     else:
         response = "Don't seem to find an arXiv link..."
 
