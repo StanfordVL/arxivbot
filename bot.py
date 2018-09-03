@@ -25,6 +25,7 @@ EXAMPLE_COMMAND = "do"
 MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
 ARXIV_REGEX = r'(https?://[^\s]+)'
 
+# for sumy
 lang = 'english'
 tknz = Tokenizer(lang)
 stemmer = Stemmer(lang)
@@ -32,6 +33,9 @@ summarizer = Summarizer(stemmer)
 
 
 def summarize(string, num_sentence=3):
+    """
+    Summarize a sentence with sumy
+    """
     parser = PlaintextParser(string, tknz)
     parser.stop_word = get_stop_words(lang)
     summ_string = ''
@@ -41,10 +45,15 @@ def summarize(string, num_sentence=3):
 
 
 def parse_arxiv(command):
+    """
+    Hacky way to parse out an an arxiv ID from a sentence
+    """
     command = command.strip('>')
     links = re.findall(ARXIV_REGEX, command)
     arxiv_ids = []
     for link in links:
+        if 'arxiv' not in link:
+            continue
         arxiv_id = link.split('/')[-1]
         arxiv_id = arxiv_id.split('.pdf')[0]
         arxiv_ids.append(arxiv_id)
@@ -55,10 +64,16 @@ def parse_arxiv(command):
 
 
 def format_arxiv(article, do_summarize=True):
+    """
+    Format an arxiv article info into a response string
+    Optionally summarize the abstract with sumy
+    """
     msg = 'Title: %s\n' % article['title']
     msg += 'Authors: %s\n' % ', '.join(article['authors'])
     abstract = ' '.join(article['summary'].split('\n'))
-    msg += '\nAbstract (auto-summarized): ' + summarize(abstract) + '\n\n'
+    if do_summarize:
+        abstract = summarize(abstract)
+    msg += '\nAbstract (auto-summarized): ' + abstract + '\n\n'
     msg += 'PDF: %s' % article['pdf_url']
     return msg
 
