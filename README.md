@@ -1,6 +1,6 @@
 # pairbot
 This is a Slack bot that posts arXiv summaries in a channel
-Built based on tutorial: https://www.fullstackpython.com/blog/build-first-slack-bot-python.html
+built based on this tutorial: https://www.fullstackpython.com/blog/build-first-slack-bot-python.html
 
 ## Quick start
 - Follow this [instruction](https://www.fullstackpython.com/blog/build-first-slack-bot-python.html)
