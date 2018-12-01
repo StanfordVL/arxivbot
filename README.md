@@ -1,4 +1,4 @@
-# pairbot
+# ArxivBot
 This is a Slack bot that posts arXiv summaries in a channel
 built based on this tutorial: https://www.fullstackpython.com/blog/build-first-slack-bot-python.html
 
@@ -21,10 +21,10 @@ export SLACK_BOT_TOKEN=<your-slack-bot-token>
 ## Interact with the bot
 
 Invite the bot user to a channel, then mention the bot at the beginning of your message, and include a 
-arxiv link in your message. For example, say the username of your bot is `pair-bot`. After typing
+arxiv link in your message. For example, say the username of your bot is `arxivbot`. After typing
 
 ```
-@pair-bot, give me a summary of https://arxiv.org/abs/1710.01813
+@arxivbot, give me a summary of https://arxiv.org/abs/1710.01813
 ```
 
 , the bot (hopefully) will respond with
