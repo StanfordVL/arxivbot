@@ -54,7 +54,6 @@ def parse_arxiv(command):
     """
     links = re.findall(ARXIV_REGEX, command)
     arxiv_ids = []
-    print(command)
     for link in links:
         print(link)
         if 'arxiv' not in link:
@@ -123,8 +122,9 @@ def handle_command(command, channel):
                 response += format_arxiv(article)
         else:
             response = "Don't seem to find an arXiv link..."
-    except:
-        response = 'Some exception caught. @$s go debug!' % USER_HANDLE
+    except Exception as e:
+        print(e)
+        response = 'Some exception caught. %s go debug!' % USER_HANDLE
 
     # Sends the response back to the channel
     slack_client.api_call(
