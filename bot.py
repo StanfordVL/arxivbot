@@ -63,7 +63,7 @@ def parse_arxiv(command):
         arxiv_ids.append(arxiv_id)
     articles = []
     if len(arxiv_ids) > 0:
-        articles = arxiv.query(id_list=arxiv_ids)
+        articles = list(arxiv.Search(id_list=arxiv_ids).results())
     return articles
 
 
@@ -72,13 +72,14 @@ def format_arxiv(article, do_summarize=True):
     Format an arxiv article info into a response string
     Optionally summarize the abstract with sumy
     """
-    msg = 'Title: %s\n' % article['title']
-    msg += 'Authors: %s\n' % ', '.join(article['authors'])
-    abstract = ' '.join(article['summary'].split('\n'))
+    msg = 'Title: %s\n' % article.title
+    authors = [a.name for a in article.authors]
+    msg += 'Authors: %s\n' % ', '.join(authors)
+    abstract = ' '.join(article.summary.split('\n'))
     if do_summarize:
         abstract = summarize(abstract)
     msg += '\nAbstract (auto-summarized): ' + abstract + '\n\n'
-    msg += 'PDF: %s' % article['pdf_url']
+    msg += 'PDF: %s' % article.pdf_url
     return msg
 
 
@@ -113,6 +114,7 @@ def handle_command(command, channel):
     """ Executes bot command if the command is known
     """
     # This is where you start to implement more commands!
+    """
     try:
         articles = parse_arxiv(command)
         if len(articles) > 0:
@@ -125,6 +127,15 @@ def handle_command(command, channel):
     except Exception as e:
         print(e)
         response = 'Some exception caught. %s go debug!' % USER_HANDLE
+    """
+    articles = parse_arxiv(command)
+    if len(articles) > 0:
+       response = 'Here is what I found on arXiv: '
+       for article in parse_arxiv(command):
+           response += '\n\n'
+           response += format_arxiv(article)
+    else:
+       response = "Don't seem to find an arXiv link..."
 
     # Sends the response back to the channel
     slack_client.api_call(
